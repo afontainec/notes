@@ -19,6 +19,13 @@ class Table {
     return knex(this.tableName);
   }
 
+  columnNames() {
+    const tableName = this.tableName;
+    return knex('information_schema.columns').select('column_name').where({
+      table_name: tableName,
+    });
+  }
+
 
   // ################################################
   // CUD FROM CRUD
@@ -27,9 +34,7 @@ class Table {
   new() {
     const tableName = this.tableName;
     return new Promise((resolve, reject) => {
-      knex('information_schema.columns').select('column_name').where({
-        table_name: tableName,
-      }).then((attributes) => {
+      this.columnNames().then((attributes) => {
           // check if attributes is an array
         if (!attributes || attributes.length === 0) {
           return reject(`Hubo un error creando un nuevo objeto: ${tableName}`);
@@ -178,9 +183,7 @@ class Table {
   getAttributesNames() {
     const tableName = this.tableName;
     return new Promise((resolve, reject) => {
-      knex('information_schema.columns').select('column_name').where({
-        table_name: tableName,
-      }).then((results) => {
+      this.columnNames().then((results) => {
           // check if results is an array
         if (!results || results.length === 0) {
           return reject(`Hubo un error creando un nuevo objeto: ${tableName}`);
