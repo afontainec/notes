@@ -1,0 +1,41 @@
+{
+  "name": "tutorial",
+  "version": "0.0.0",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "duplicates": "echo jsinpect && jsinspect . && echo  &&  jscpd --path ./ --exclude 'node_modules/**' --languages javascript, htmlmixed  ",
+    "lint": "eslint . --config .eslintrc.js"
+  },
+  "dependencies": {
+    "bcrypt-nodejs": "latest",
+    "body-parser": "~1.15.1",
+    "connect-flash": "~0.1.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "ejs": "~0.8.5",
+    "express": "~4.13.4",
+    "express-session": "~1.0.0",
+    "knex": "^0.10.0",
+    "method-override": "~1.0.0",
+    "morgan": "~1.7.0",
+    "node-foursquare-venues": "latest",
+    "passport": "~0.1.17",
+    "passport-local": "~0.1.6",
+    "pg": "^4.5.3",
+    "requestify": "^0.2.5",
+    "serve-favicon": "~2.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.7.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-config-airbnb": "^12.0.0",
+    "eslint-config-google": "^0.6.0",
+    "eslint-plugin-angular": "^1.3.1",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.4.1",
+    "eslint-plugin-smells": "^1.0.1",
+    "jscpd": "^0.6.13",
+    "jsinspect": "^0.12.7"
+  }
+}
