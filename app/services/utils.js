@@ -17,5 +17,7 @@ exports.isEmptyJSON = function empty(x) {
 };
 
 exports.isInteger = function isInt(value) {
-  return !isNaN(value) && (function temp(x) { return (x || 0) === x; }(parseFloat(value)));
+  const float = parseFloat(value);
+  const isValidInt = (function temp(x) { return (x || 0) === x; }(float));
+  return !isNaN(value) && isValidInt;
 };

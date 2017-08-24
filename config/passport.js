@@ -6,6 +6,28 @@ const LocalStrategy = require('passport-local').Strategy;
 // load up the user model
 const User = require('../app/models/user');
 
+
+function saveUser(req, username, password, done) {
+  // create the user
+  User.new().then((newUser) => {
+    // set the user's local credentials
+    newUser.username = username;
+    newUser.password = User.generateHash(password);
+
+    // save the user
+    User.save(newUser).then(savedUser => done(null, savedUser)).catch((err) => {
+      if (err) {
+        return done(req.flash('signupMessage', err));
+      }
+    });
+  }).catch((err) => {
+    // if there are any errors, return the error
+    if (err) {
+      return done(err);
+    }
+  });
+}
+
 // expose this function to our app using module.exports
 module.exports = function auth(passport) {
   // =========================================================================
@@ -31,14 +53,15 @@ module.exports = function auth(passport) {
   // =========================================================================
   // LOCAL SIGNUP ============================================================
   // =========================================================================
-  // we are using named strategies since we have one for login and one for signup
+  // we are using named strategies since we have
+  // one for login and one for signup
   // by default, if there was no name, it would just be called 'local'
 
   passport.use('local-signup', new LocalStrategy({
-      // by default, local strategy uses username and password, we will override with username
     usernameField: 'username',
     passwordField: 'password',
-    passReqToCallback: true, // allows us to pass back the entire request to the callback
+      // allows us to pass back the entire request to the callback
+    passReqToCallback: true,
   },
     (req, username, password, done) => {
       // asynchronous
@@ -54,24 +77,7 @@ module.exports = function auth(passport) {
                 'That username is already taken.'));
             }
             // if there is no user with that username
-            // create the user
-            User.new().then((newUser) => {
-              // set the user's local credentials
-              newUser.username = username;
-              newUser.password = User.generateHash(password);
-
-              // save the user
-              User.save(newUser).then(savedUser => done(null, savedUser)).catch((err) => {
-                if (err) {
-                  return done(req.flash('signupMessage', err));
-                }
-              });
-            }).catch((err) => {
-              // if there are any errors, return the error
-              if (err) {
-                return done(err);
-              }
-            });
+            saveUser(req, username, password, done);
           }).catch(err => done(err));
       });
     }));
@@ -79,14 +85,16 @@ module.exports = function auth(passport) {
   // =========================================================================
   // LOCAL LOGIN =============================================================
   // =========================================================================
-  // we are using named strategies since we have one for login and one for signup
+  // we are using named strategies since
+  // we have one for login and one for signup
   // by default, if there was no name, it would just be called 'local'
 
   passport.use('local-login', new LocalStrategy({
-      // by default, local strategy uses username and password, we will override with username
+      // by default, local strategy uses username and password
     usernameField: 'username',
     passwordField: 'password',
-    passReqToCallback: true, // allows us to pass back the entire request to the callback
+      // allows us to pass back the entire request to the callback
+    passReqToCallback: true,
   },
     (req, username, password, done) => {
       // callback with username and password from our form
@@ -96,13 +104,14 @@ module.exports = function auth(passport) {
       User.findByUsername(username).then((user) => {
         // if no user is found, return the message
         if (!user) {
-          return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+          // req.flash is the way to set flashdata using connect-flash
+          return done(null, false, req.flash('loginMessage', 'No user found.'));
         }
         // if the user is found but the password is wrong
         if (!User.validPassword(user, password)) {
-          return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+          const errorMessage = 'Oops! Wrong password.';
+          return done(null, false, req.flash('loginMessage', errorMessage));
         }
-        // all is well, return successful user
         return done(null, user);
       }).catch(err => done(err));
     }));

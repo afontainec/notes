@@ -125,8 +125,9 @@ class Table {
   find(attributes) {
     return new Promise((resolve, reject) => {
       this.filterAttributes(attributes)
-        .then((filteredAttributes) => {
-          this.table().select().where(filteredAttributes).then(results => resolve(results))
+        .then((filtered) => {
+          this.table().select()
+            .where(filtered).then(results => resolve(results))
             .catch(() => {
               reject('Find parameter was not defined correctly');
             });
