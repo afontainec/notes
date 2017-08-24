@@ -57,11 +57,7 @@ class Table {
       this.parseAttributesForUpsert(params, true)
         .then((attributes) => {
           this.table().insert(attributes).returning('*').then((entry) => {
-              // check if attributes is an array
-            if (!entry || entry.length === 0) {
-              return reject(errorString);
-            }
-            resolve(entry[0]);
+            resolve(utils.first(entry));
           })
             .catch(() => {
               reject(errorString);
@@ -71,6 +67,7 @@ class Table {
         });
     });
   }
+
 
   update(id, attr) {
     const errorString = 'Something went wrong';
@@ -84,11 +81,7 @@ class Table {
             id,
           }).update(attributes).returning('*')
             .then((entry) => {
-              // check if attributes is an array
-              if (!entry || entry.length === 0) {
-                return reject(errorString);
-              }
-              resolve(entry[0]);
+              resolve(utils.first(entry));
             })
             .catch(() => {
               reject(errorString);
