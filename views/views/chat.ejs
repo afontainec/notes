@@ -1,0 +1,374 @@
+<!doctype html>
+<!-- views/profile.ejs -->
+<html>
+
+  <head>
+    <title>Node Authentication</title>
+    <link rel="stylesheet" href="/stylesheets/style.css"/>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+      body {
+        padding-top: 80px;
+        word-wrap: break-word;
+      }
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="/angular/app.js"></script>
+    <script src="/angular/controllers/controller.js"></script>
+    <script src="/angular/controllers/userController.js"></script>
+  </head>
+
+  <body ng-app="app">
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      var socket = io.connect('http://localhost:6128');
+
+      // on connection to server, ask for user's name with an anonymous callback
+      socket.on('connect', function () {
+        // call the server-side function 'adduser' and send one parameter (value of prompt)
+        socket.emit('adduser', '<%= user.username %>');
+      });
+
+      // listener, whenever the server emits 'updatechat', this updates the chat body
+      socket.on('updatechat', function (username, data) {
+        $('#conversation').append('<b>' + username + ':</b> ' + data + '<br>');
+      });
+
+      // // listener, whenever the server emits 'updaterooms', this updates the room the client is in
+      socket.on('updaterooms', function (rooms, current_room) {
+        // $('#rooms').empty();
+        // $.each(rooms, function (key, value) {
+        //   if (value == current_room) {
+        //     $('#rooms').append('<li>' + value + '</li>');
+        //   } else {
+        //     $('#rooms').append('<li><a href="#" onclick="switchRoom(\'' + value + '\')">' + value + '</a></li>');
+        //   }
+        // });
+      });
+
+      function switchRoom(room) {
+        $('#conversation').empty();
+        socket.emit('switchRoom', room);
+      }
+
+      // on load of page
+      $(function () {
+        // when the client clicks SEND
+        $('#datasend').click(function () {
+          var message = $('#data').val();
+          $('#data').val('');
+          // tell server to execute 'sendchat' and send along one parameter
+          socket.emit('sendchat', message);
+        });
+
+        // when the client hits ENTER on their keyboard
+        $('#data').keypress(function (e) {
+          if (e.which == 13) {
+            $(this).blur();
+            $('#datasend').focus().click();
+          }
+        });
+      });
+    </script>
+    <script src="scripts/locate.js"></script>
+
+    <div class="container" ng-controller="userController">
+
+      <div class="page-header text-center">
+        <h1>
+          <span class="fa fa-anchor"></span>
+          Profile Page</h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-4">
+          <div class="well">
+            <h3>
+              <span class="fa fa-money"></span>
+              Comprar Arquicoins</h3>
+
+            <a ng-click="buyArquicoins()" class=" btn btn-default btn-sm">
+              Comprar 100 arquicoins</a>
+
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="well">
+            <h3>
+              <span class="fa fa-money"></span>
+              Comprar Algo</h3>
+
+            <a ng-click="spendArquicoins()" class=" btn btn-default btn-sm">
+              Gastar 80 arquicoins</a>
+
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <div class="well">
+            <h3>
+              <span class="fa fa-exchange"></span>
+              Transferir</h3>
+
+            <a ng-click="transferArquicoins()" class=" btn btn-default btn-sm">
+              Transferir  50 arquicoins a user con id 1</a>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row" ng-init="initialize('<%= JSON.stringify(user) %>')">
+
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-6">
+          <div class="well" ng-if="!showEdit">
+            <div ng-if="message" class="alert alert-success">
+              {{message}}
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            </div>
+            <h3>
+              <span class="fa fa-user"></span>
+              Local</h3>
+
+            <p>
+              <strong>id</strong>:
+              {{user.id}}
+              <br/>
+              <strong>username</strong>:
+              {{ user.username }}
+              <br>
+              <strong>Dirección
+              </strong>:
+              {{ user.address }}
+              <br/>
+              <strong>Grupo Sanguíneo
+              </strong>:
+              {{ user.bloodtype }}
+              <br/>
+              <strong>Fecha de nacimiento:
+              </strong>:
+              {{ user.birthday | date }}
+              <br/>
+              <strong>arquicoins</strong>:
+              {{ user.arquicoins }}<br>
+            </p>
+            <a ng-click="triggerShowEdit()" class="btn btn-default btn-sm">Editar</a>
+
+          </div>
+          <div class="well" ng-if="showEdit">
+            <div ng-if="message" class="alert alert-danger">{{message}}</div>
+
+            <h3>
+              <span class="fa fa-user"></span>
+              Local</h3>
+
+            <div class="form-group">
+              <label>username</label>
+              <input type="text" class="form-control" name="username" ng-model="newUser.username">
+            </div>
+            <div class="form-group">
+              <label>Grupo sanguineo</label>
+              <input type="text" class="form-control" name="bloodtype" ng-model="newUser.bloodtype">
+            </div>
+            <div class="form-group">
+              <label>Direccion</label>
+              <input type="text" class="form-control" name="address" ng-model="newUser.address">
+            </div>
+            <div class="form-group">
+              <label>Fecha nacimiento</label>
+              <input type="date" class="form-control" name="birthday" ng-model="newUser.birthday">
+            </div>
+            <a ng-click="save()" class="btn btn-default btn-sm">Guardar Cambios</a>
+            <a ng-click="triggerShowEdit()" class="btn btn-default btn-sm">Cancelar</a>
+
+          </div>
+        </div>
+        <div class="col-sm-6" ng-init="fetchCards()">
+          <div class="well">
+            <h3>
+              <span class="fa fa-credit-card"></span>
+              Tarjetas</h3>
+            <div ng-if="!cards">
+              <div ng-if="cardMessage" class="alert alert-danger">
+                {{cardMessage}}
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              </div>
+
+              <h1 class="text-center">
+                <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+              </h1>
+            </div>
+            <div ng-if="cards.length === 0" class="alert alert-info">
+              El usuario no tiene tarjetas de kredito
+            </div>
+            <div class="panel-group">
+              <div class="panel panel-default" ng-repeat="card in cards">
+                <div class="panel-heading" ng-init="parseDateOfCard(card)">
+                  <h4 class="panel-title">
+
+                    <a data-toggle="collapse" data-parent="#accordion" href="#card{{card.id}}">
+                      {{card.number}}
+                      <small>
+                        (Operador:
+                        {{card.operator}})
+                      </small>
+                    </a>
+
+                  </h4>
+                </div>
+                <!-- /.panel-heading -->
+                <div id="card{{card.id}}" class="panel-collapse collapse">
+                  <div ng-if="!card.edit">
+                    <ul>
+                      <li>Operador:
+                        {{card.operator}}</li>
+                      <li>Fecha de expiración:
+                        {{card.expire_date | date}}</li>
+                      <li>Nombre en tarjeta:
+                        {{card.first_name}} {{card.last_name}}</li>
+                    </ul>
+                    <a ng-click="toggleEditCard(card)" class=" btn btn-default btn-sm">
+                      Editar tarjeta</a>
+                    <a ng-click="delete(card)" class=" btn btn-default btn-sm">
+                      Eliminar tarjeta</a>
+                  </div>
+                  <div ng-if="card.edit">
+                    <div class="form-group">
+                      <label>Numero</label>
+                      <input type="text" class="form-control" name="number" ng-model="card.number">
+                      <div ng-if="!card.number" class="alert alert-danger">
+                        Debe tener un numero
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Operador</label>
+                      <input placeholder="RedKompra" type="text" class="form-control" name="operator" ng-model="card.operator">
+                      <div ng-if="!card.operator" class="alert alert-danger">
+                        Debe tener un operador
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Nombre</label>
+                      <input type="text" class="form-control" name="first_name" ng-model="card.first_name">
+                      <div ng-if="!card.first_name" class="alert alert-danger">
+                        Debe tener un nombre
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Apellido</label>
+                      <input type="text" class="form-control" name="last_name" ng-model="card.last_name">
+                      <div ng-if="!card.last_name" class="alert alert-danger">
+                        Debe tener un apellido
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Fecha expiracion</label>
+                      <input type="date" class="form-control" name="expire_date" ng-model="card.expire_date">
+                      <div ng-if="!card.expire_date" class="alert alert-danger">
+                        Debe tener un fecha de expiración
+                      </div>
+                    </div>
+                    <a ng-if="!(!card.expire_date || !card.first_name || !card.last_name || !card.number || !card.operator)" ng-click="updateCard(card)" class=" btn btn-default btn-sm">Guardar Cambios</a>
+                    <a ng-if="!card.expire_date || !card.first_name || !card.last_name || !card.number || !card.operator" class=" btn btn-default btn-sm" disabled>Guardar Cambios</a>
+                    <a ng-click="toggleEditCard(card)" class=" btn btn-default btn-sm">
+                      Cancelar</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div ng-if="newCardForm" class="well">
+
+              <div class="form-group">
+                <label>Número</label>
+                <input type="text" class="form-control" name="number" ng-model="newCard.number">
+                <div ng-if="!newCard.number" class="alert alert-danger">
+                  Debe tener un número
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Operador</label>
+                <input placeholder="RedKompra" type="text" class="form-control" name="operator" ng-model="newCard.operator">
+                <div ng-if="!newCard.operator" class="alert alert-danger">
+                  Debe tener un operador
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" class="form-control" name="first_name" ng-model="card.first_name">
+                <div ng-if="!card.first_name" class="alert alert-danger">
+                  Debe tener un nombre
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Apellido</label>
+                <input type="text" class="form-control" name="last_name" ng-model="card.last_name">
+                <div ng-if="!card.last_name" class="alert alert-danger">
+                  Debe tener un apellido
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Fecha expiracion</label>
+                <input type="date" class="form-control" name="expire_date" ng-model="newCard.expire_date">
+                <div ng-if="!newCard.expire_date" class="alert alert-danger">
+                  Debe tener un fecha de expiración
+                </div>
+              </div>
+              <a ng-if="!(!newCard.expire_date || !card.first_name || !card.last_name || !newCard.number || !newCard.operator)" ng-click="addCard()" class=" btn btn-default btn-sm">Agregar</a>
+              <a ng-if="!newCard.expire_date || !card.first_name || !card.last_name || !newCard.number || !newCard.operator" class=" btn btn-default btn-sm" disabled>Agregar</a>
+
+              <a ng-click="toggleNewCardForm()" class=" btn btn-default btn-sm">cancelar</a>
+
+            </div>
+            <a ng-if="!newCardForm" ng-click="toggleNewCardForm()" class=" btn btn-default btn-sm">
+              Agregar Nueva tarjeta</a>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-6">
+          <div class="well">
+            <h3>
+              <span class="fa fa-comments"></span>
+              Lugares</h3>
+
+            <div id="map"></div>
+            <ul id="rooms"></ul>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="well">
+            <h3>
+              <span class="fa fa-comment"></span>
+              Chat</h3>
+
+            <div>
+              <div id="conversation"></div>
+              <input id="data" style="width:200px;"/>
+              <input type="button" id="datasend" value="send"/>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </body>
+
+</html>
