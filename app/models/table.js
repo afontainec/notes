@@ -47,6 +47,7 @@ class Table {
   }
 
   save(entry) {
+    console.log(entry);
     const errorString = 'Something went wrong';
     return new Promise((resolve, reject) => {
       this.parseAttributesForUpsert(entry, true)
@@ -58,10 +59,12 @@ class Table {
             }
             resolve(entry[0]);
           })
-            .catch(() => {
+            .catch((err) => {
+              console.log(err);
               reject(errorString);
             });
         }).catch((err) => {
+          console.log(err);
           reject(err);
         });
     });

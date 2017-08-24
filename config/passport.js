@@ -59,15 +59,9 @@ module.exports = function auth(passport) {
               // set the user's local credentials
               newUser.username = username;
               newUser.password = User.generateHash(password);
-              newUser.address = req.body.address;
-              newUser.bloodtype = req.body.bloodtype;
-              if ((new Date(req.body.birthday) !== 'Invalid Date' && !isNaN(new Date(req.body.birthday)))) {
-                newUser.birthday = req.body.birthday;
-              }
+
               // save the user
-              User.save(newUser).then((user) => {
-                return done(null, user);
-              }).catch((err) => {
+              User.save(newUser).then(user => done(null, user)).catch((err) => {
                 if (err) {
                   return done(req.flash('signupMessage', err));
                 }
@@ -78,9 +72,7 @@ module.exports = function auth(passport) {
                 return done(err);
               }
             });
-          }).catch((err) => {
-            return done(err);
-          });
+          }).catch(err => done(err));
       });
     }));
 
@@ -112,8 +104,6 @@ module.exports = function auth(passport) {
         }
         // all is well, return successful user
         return done(null, user);
-      }).catch((err) => {
-        return done(err);
-      });
+      }).catch(err => done(err));
     }));
 };

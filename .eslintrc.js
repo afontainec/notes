@@ -9,6 +9,7 @@ module.exports = {
     "import"
   ],
   "rules": {
+    "consistent-return": 0
   },
   "globals": {
   }
