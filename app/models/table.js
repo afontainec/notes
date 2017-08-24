@@ -1,8 +1,7 @@
 // server/models/table.js
 
-'use strict';
 
-const knex = require('../../database/sql/knex');
+const knex = require('../../database/knex');
 const utils = require('../services/utils');
 
 
@@ -127,9 +126,7 @@ class Table {
     return new Promise((resolve, reject) => {
       this.filterAttributes(attributes)
         .then((filteredAttributes) => {
-          this.table().select().where(filteredAttributes).then((results) => {
-            return resolve(results);
-          })
+          this.table().select().where(filteredAttributes).then(results => resolve(results))
             .catch(() => {
               reject('Find parameter was not defined correctly');
             });
@@ -247,9 +244,7 @@ class Table {
         }
         return resolve(filteredAttributes);
       })
-        .catch((err) => {
-          return reject(err);
-        });
+        .catch(err => reject(err));
     });
   }
 

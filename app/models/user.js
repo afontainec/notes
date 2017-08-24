@@ -1,6 +1,5 @@
 const Table = require('./table'); // eslint-disabled-this-line no-unused-vars
 const bcrypt = require('bcrypt-nodejs');
-// const knex = require('../../database/sql/knex');
 
 
 class Users extends Table {
