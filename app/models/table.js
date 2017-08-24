@@ -28,7 +28,7 @@ class Table {
     const tableName = this.tableName;
     return new Promise((resolve, reject) => {
       knex('information_schema.columns').select('column_name').where({
-        tableName,
+        table_name: tableName,
       }).then((attributes) => {
           // check if attributes is an array
         if (!attributes || attributes.length === 0) {
@@ -178,7 +178,7 @@ class Table {
     const tableName = this.tableName;
     return new Promise((resolve, reject) => {
       knex('information_schema.columns').select('column_name').where({
-        tableName,
+        table_name: tableName,
       }).then((results) => {
           // check if results is an array
         if (!results || results.length === 0) {
