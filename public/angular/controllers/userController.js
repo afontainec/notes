@@ -13,7 +13,7 @@ controllers
   $scope.cardMessage = null;
   $scope.newCard = {};
 
-  $scope.initialize = function functionName(user) {
+  $scope.initialize = function initUser(user) {
     $scope.user = JSON.parse(user);
     $scope.newUser = copyJSON($scope.user);
   }
@@ -25,35 +25,11 @@ controllers
     })
     return toJSON;
   }
-   $scope.setUsers = function(users) {
-    console.log(users);
-    // $scope.users = JSON.parse(users);
-    console.log(users);
-    console.log($scope.users);
 
-  }
-
-  $scope.setArquicoins = function(amount) {
-    console.log(amount);
-    $scope.user.arquicoins = amount;
-  }
 
   $scope.triggerShowEdit = function() {
     $scope.message = null;
     $scope.showEdit = !$scope.showEdit;
-  }
-
-  $scope.toggleNewCardForm = function() {
-    $scope.newCardMessage = null;
-    $scope.newCardForm = !$scope.newCardForm;
-  }
-
-  $scope.parseDateOfCard = function(card) {
-    card.expire_date = new Date(card.expire_date);
-  }
-
-  $scope.toggleEditCard = function(card) {
-    card.edit = !card.edit;
   }
 
   $scope.save = function() {

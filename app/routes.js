@@ -46,6 +46,10 @@ module.exports = function router(app, passport) {
     failureRedirect: '/signup', // redirect back to the signup page if there is an error
     failureFlash: true, // allow flash messages
   }));
+
+  app.get('/user/:username/exists', (req, res) => {
+    userController.userExists(req, res);
+  });
   // =====================================
   // PROFILE SECTION =====================
   // =====================================
