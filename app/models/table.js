@@ -59,12 +59,10 @@ class Table {
             }
             resolve(entry[0]);
           })
-            .catch((err) => {
-              console.log(err);
+            .catch(() => {
               reject(errorString);
             });
         }).catch((err) => {
-          console.log(err);
           reject(err);
         });
     });
@@ -153,14 +151,14 @@ class Table {
         }
         reject(`No se encontró una entrada con id = ${id}`);
       })
-          .catch((error) => {
-            reject(error);
-          });
+        .catch((error) => {
+          reject(error);
+        });
     });
   }
-    // ################################################
-    // Miscelaneous
-    // ################################################
+  // ################################################
+  // Miscelaneous
+  // ################################################
 
   getFirstDate() {
     return new Promise((resolve, reject) => {

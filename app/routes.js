@@ -1,19 +1,9 @@
 // app/routes.js
 
-const chatController = require('./controllers/chat');
-const locateController = require('./controllers/locate');
+
 const userController = require('./controllers/userController');
-const cardController = require('./controllers/cardController');
 
 module.exports = function router(app, passport) {
-  // Geolocation
-  app.get('/geolocate', (req, res) => {
-    locateController.main(req, res, {
-      lat: req.query.lat,
-      lon: req.query.lon,
-    });
-  });
-
   // =====================================
   // HOME PAGE (with login links) ========
   // =====================================
@@ -63,34 +53,11 @@ module.exports = function router(app, passport) {
   // we will use route middleware to verify this (the isLoggedIn function)
   // eslint-disable-next-line
   app.get('/profile', isLoggedIn, (req, res) => {
-    chatController.main(req, res);
+    userController.profile(req, res);
   });
   // eslint-disable-next-line
   app.post('/user/:id/update', hasAccess, (req, res) => {
     userController.update(req, res);
-  });
-  // eslint-disable-next-line
-  app.get('/user/:id/fetchCards', hasAccess, (req, res) => {
-    userController.getKreditCards(req, res);
-  });
-
-  // eslint-disable-next-line
-  app.post('/user/:id/card/new', hasAccess, (req, res) => {
-    cardController.create(req, res);
-  });
-
-  // eslint-disable-next-line
-  app.post('/user/:id/card/:card_id/update', hasAccess, (req, res) => {
-    cardController.update(req, res);
-  });
-
-// eslint-disable-next-line
-  app.post('/user/:id/card/:card_id/delete', hasAccess, (req, res) => {
-    cardController.delete(req, res);
-  });
-
-  app.get('/user/:username/exists', (req, res) => {
-    userController.userExists(req, res);
   });
 
   // =====================================
@@ -102,44 +69,28 @@ module.exports = function router(app, passport) {
   });
 
 
-  // =====================================
-  // arquicoins  =========================
-  // =====================================
+  // route middleware to make sure a user is logged in
+  function hasAccess(req, res, next) {
+    const urlId = req.params.id.toString();
+    const loggedId = req.session.passport.user.toString();
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated() && (urlId === loggedId)) {
+      return next();
+    }
+    req.logout();
+    // if they aren't redirect them to the home page
+    res.status(403).send('You dont have permission to edit this user');
+  }
 
-  app.post('/user/:id/buy/arquicoins', hasAccess, (req, res) => {
-    userController.buyArquicoins(req, res);
-  });
+  // route middleware to make sure a user is logged in
+  function isLoggedIn(req, res, next) {
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated()) {
+      return next();
+    }
 
-  app.post('/user/:id/buy/something', hasAccess, (req, res) => {
-    userController.spendArquicoins(req, res);
-  });
-
-  app.post('/user/:id/transfer/arquicoins', hasAccess, (req, res) => {
-    userController.transferArquicoins(req, res);
-  });
+    // if they aren't redirect them to the home page
+    req.logout();
+    res.redirect('/');
+  }
 };
-
-// route middleware to make sure a user is logged in
-function hasAccess(req, res, next) {
-  const urlId = req.params.id.toString();
-  const loggedId = req.session.passport.user.toString();
-  // if user is authenticated in the session, carry on
-  if (req.isAuthenticated() && (urlId === loggedId)) {
-    return next();
-  }
-  req.logout();
-  // if they aren't redirect them to the home page
-  res.status(403).send('You dont have permission to edit this user');
-}
-
-// route middleware to make sure a user is logged in
-function isLoggedIn(req, res, next) {
-  // if user is authenticated in the session, carry on
-  if (req.isAuthenticated()) {
-    return next();
-  }
-
-  // if they aren't redirect them to the home page
-  req.logout();
-  res.redirect('/');
-}

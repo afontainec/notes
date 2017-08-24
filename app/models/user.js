@@ -1,5 +1,6 @@
 const Table = require('./table'); // eslint-disabled-this-line no-unused-vars
 const bcrypt = require('bcrypt-nodejs');
+// const knex = require('../../database/sql/knex');
 
 
 class Users extends Table {
@@ -20,28 +21,6 @@ class Users extends Table {
   //eslint-disable-next-line
   validPassword(user, password) {
     return bcrypt.compareSync(password, user.password);
-  }
-
-  changeArquicoins(id, amount) {
-    return new Promise((resolve, reject) => {
-      super.findById(id).then((user) => {
-        if (!user) {
-          return reject('No user found');
-        }
-        const newArquicoins = user.arquicoins + amount;
-        this.table().where({
-          id,
-        }).update({
-          arquicoins: newArquicoins,
-        }).returning('*')
-          .then((user) => {
-            resolve(user);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
-    });
   }
 
   findByUsername(username) {

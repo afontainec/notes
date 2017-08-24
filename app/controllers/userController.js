@@ -27,3 +27,10 @@ exports.update = function update(req, res) {
     user,
   })).catch(err => res.status(500).send(err));
 };
+
+
+exports.profile = function showProfile(req, res) {
+  return res.render('chat.ejs', {
+    user: req.user,
+  });
+};
