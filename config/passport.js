@@ -60,27 +60,27 @@ module.exports = function auth(passport) {
   passport.use('local-signup', new LocalStrategy({
     usernameField: 'username',
     passwordField: 'password',
-      // allows us to pass back the entire request to the callback
+    // allows us to pass back the entire request to the callback
     passReqToCallback: true,
   },
-    (req, username, password, done) => {
-      // asynchronous
-      // User.findOne wont fire unless data is sent back
-      process.nextTick(() => {
-        // find a user whose username is the same as the forms username
-        // we are checking to see if the user trying to login already exists
-        User.findByUsername(username)
-          .then((user) => {
-            // check to see if theres already a user with that username
-            if (user) {
-              return done(null, false, req.flash('signupMessage',
-                'That username is already taken.'));
-            }
-            // if there is no user with that username
-            saveUser(req, username, password, done);
-          }).catch(err => done(err));
-      });
-    }));
+  (req, username, password, done) => {
+    // asynchronous
+    // User.findOne wont fire unless data is sent back
+    process.nextTick(() => {
+      // find a user whose username is the same as the forms username
+      // we are checking to see if the user trying to login already exists
+      User.findByUsername(username)
+        .then((user) => {
+          // check to see if theres already a user with that username
+          if (user) {
+            return done(null, false, req.flash('signupMessage',
+              'That username is already taken.'));
+          }
+          // if there is no user with that username
+          saveUser(req, username, password, done);
+        }).catch(err => done(err));
+    });
+  }));
 
   // =========================================================================
   // LOCAL LOGIN =============================================================
@@ -90,29 +90,29 @@ module.exports = function auth(passport) {
   // by default, if there was no name, it would just be called 'local'
 
   passport.use('local-login', new LocalStrategy({
-      // by default, local strategy uses username and password
+    // by default, local strategy uses username and password
     usernameField: 'username',
     passwordField: 'password',
-      // allows us to pass back the entire request to the callback
+    // allows us to pass back the entire request to the callback
     passReqToCallback: true,
   },
-    (req, username, password, done) => {
-      // callback with username and password from our form
+  (req, username, password, done) => {
+    // callback with username and password from our form
 
-      // find a user whose username is the same as the forms username
-      // we are checking to see if the user trying to login already exists
-      User.findByUsername(username).then((user) => {
-        // if no user is found, return the message
-        if (!user) {
-          // req.flash is the way to set flashdata using connect-flash
-          return done(null, false, req.flash('loginMessage', 'No user found.'));
-        }
-        // if the user is found but the password is wrong
-        if (!User.validPassword(user, password)) {
-          const errorMessage = 'Oops! Wrong password.';
-          return done(null, false, req.flash('loginMessage', errorMessage));
-        }
-        return done(null, user);
-      }).catch(err => done(err));
-    }));
+    // find a user whose username is the same as the forms username
+    // we are checking to see if the user trying to login already exists
+    User.findByUsername(username).then((user) => {
+      // if no user is found, return the message
+      if (!user) {
+        // req.flash is the way to set flashdata using connect-flash
+        return done(null, false, req.flash('loginMessage', 'No user found.'));
+      }
+      // if the user is found but the password is wrong
+      if (!User.validPassword(user, password)) {
+        const errorMessage = 'Oops! Wrong password.';
+        return done(null, false, req.flash('loginMessage', errorMessage));
+      }
+      return done(null, user);
+    }).catch(err => done(err));
+  }));
 };

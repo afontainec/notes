@@ -1,5 +1,5 @@
 function isJson(x) {
-    // check if its null
+  // check if its null
   if (!x) {
     return false;
   }
@@ -18,7 +18,9 @@ exports.isEmptyJSON = function empty(x) {
 
 exports.isInteger = function isInt(value) {
   const float = parseFloat(value);
-  const isValidInt = (function temp(x) { return (x || 0) === x; }(float));
+  const isValidInt = (function temp(x) {
+    return (x || 0) === x;
+  }(float));
   return !isNaN(value) && isValidInt;
 };
 

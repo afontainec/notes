@@ -6,7 +6,6 @@ const utils = require('../services/utils');
 
 
 class Table {
-
   constructor(tableName) {
     this.tableName = tableName;
   }
@@ -35,7 +34,7 @@ class Table {
     const tableName = this.tableName;
     return new Promise((resolve, reject) => {
       this.columnNames().then((attributes) => {
-          // check if attributes is an array
+        // check if attributes is an array
         if (!attributes || attributes.length === 0) {
           return reject(`Hubo un error creando un nuevo objeto: ${tableName}`);
         }
@@ -177,7 +176,7 @@ class Table {
     const tableName = this.tableName;
     return new Promise((resolve, reject) => {
       this.columnNames().then((results) => {
-          // check if results is an array
+        // check if results is an array
         if (!results || results.length === 0) {
           return reject(`Hubo un error creando un nuevo objeto: ${tableName}`);
         }
@@ -270,7 +269,6 @@ class Table {
         });
     });
   }
-
 }
 
 module.exports = Table;

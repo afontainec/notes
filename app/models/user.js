@@ -4,8 +4,6 @@ const bcrypt = require('bcrypt-nodejs');
 
 
 class Users extends Table {
-
-
   constructor() {
     const tableName = 'users';
     super(tableName);
