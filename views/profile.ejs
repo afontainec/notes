@@ -1,0 +1,100 @@
+<!doctype html>
+<!-- views/profile.ejs -->
+<html>
+
+  <head>
+    <title>Node Authentication</title>
+    <link rel="stylesheet" href="/stylesheets/style.css"/>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+      body {
+        padding-top: 80px;
+        word-wrap: break-word;
+      }
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="/angular/app.js"></script>
+    <script src="/angular/controllers/controller.js"></script>
+    <script src="/angular/controllers/userController.js"></script>
+  </head>
+
+  <body ng-app="app">
+
+
+
+
+    <div class="container" ng-controller="userController">
+      <div ng-if="errorMessage" class="alert alert-danger">
+        {{errorMessage}}
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      </div>
+      <div ng-if="successMessage" class="alert alert-success">
+        {{successMessage}}
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      </div>
+
+      <div class="page-header text-center">
+        <h1>
+          <span class="fa fa-anchor"></span>
+          Profile Page</h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+      </div>
+
+      <div class="row">
+
+
+      </div>
+
+      <div class="row" ng-init="initialize('<%= JSON.stringify(user) %>')">
+
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-12">
+          <div class="well" ng-if="!showEdit">
+            <div ng-if="message" class="alert alert-success">
+              {{message}}
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            </div>
+            <h3>
+              <span class="fa fa-user"></span>
+              Local</h3>
+
+            <p>
+              <strong>id</strong>:
+              {{user.id}}
+              <br/>
+              <strong>username</strong>:
+              {{ user.username }}
+              <br/>
+              <strong>Contrase&ntilde;a
+              </strong>:
+              {{ user.password }}
+            </p>
+            <a ng-click="triggerShowEdit()" class="btn btn-default btn-sm">Editar</a>
+
+          </div>
+          <div class="well" ng-if="showEdit">
+            <div ng-if="message" class="alert alert-danger">{{message}}</div>
+
+            <h3>
+              <span class="fa fa-user"></span>
+              Local</h3>
+
+            <div class="form-group">
+              <label>username</label>
+              <input type="text" class="form-control" name="username" ng-model="newUser.username">
+            </div>
+            <a ng-click="save()" class="btn btn-default btn-sm">Guardar Cambios</a>
+            <a ng-click="triggerShowEdit()" class="btn btn-default btn-sm">Cancelar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>

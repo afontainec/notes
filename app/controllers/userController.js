@@ -30,7 +30,7 @@ exports.update = function update(req, res) {
 
 
 exports.profile = function showProfile(req, res) {
-  return res.render('chat.ejs', {
+  return res.render('profile.ejs', {
     user: req.user,
   });
 };
