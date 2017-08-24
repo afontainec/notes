@@ -7,16 +7,16 @@ const utils = require('../services/utils');
 
 class Table {
 
-  constructor(table_name) {
-    this.table_name = table_name;
+  constructor(tableName) {
+    this.tableName = tableName;
   }
 
   toString() {
-    return this.table_name;
+    return this.tableName;
   }
 
   table() {
-    return knex(this.table_name);
+    return knex(this.tableName);
   }
 
 
@@ -25,14 +25,14 @@ class Table {
   // ################################################
 
   new() {
-    const table_name = this.table_name;
+    const tableName = this.tableName;
     return new Promise((resolve, reject) => {
       knex('information_schema.columns').select('column_name').where({
-        table_name,
+        tableName,
       }).then((attributes) => {
           // check if attributes is an array
         if (!attributes || attributes.length === 0) {
-          return reject(`Hubo un error creando un nuevo objeto: ${table_name}`);
+          return reject(`Hubo un error creando un nuevo objeto: ${tableName}`);
         }
         const entry = {};
         attributes.forEach((attribute) => {
@@ -46,11 +46,10 @@ class Table {
     });
   }
 
-  save(entry) {
-    console.log(entry);
+  save(params) {
     const errorString = 'Something went wrong';
     return new Promise((resolve, reject) => {
-      this.parseAttributesForUpsert(entry, true)
+      this.parseAttributesForUpsert(params, true)
         .then((attributes) => {
           this.table().insert(attributes).returning('*').then((entry) => {
               // check if attributes is an array
@@ -176,14 +175,14 @@ class Table {
   }
 
   getAttributesNames() {
-    const table_name = this.table_name;
+    const tableName = this.tableName;
     return new Promise((resolve, reject) => {
       knex('information_schema.columns').select('column_name').where({
-        table_name,
+        tableName,
       }).then((results) => {
           // check if results is an array
         if (!results || results.length === 0) {
-          return reject(`Hubo un error creando un nuevo objeto: ${table_name}`);
+          return reject(`Hubo un error creando un nuevo objeto: ${tableName}`);
         }
         const attributes = [];
         results.forEach((attribute) => {

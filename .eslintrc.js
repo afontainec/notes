@@ -10,7 +10,8 @@ module.exports = {
   ],
   "rules": {
     "consistent-return": 0,
-    "no-param-reassigned": 0
+    "no-param-reassign": 0,
+    "no-plusplus": 0
   },
   "globals": {
   }

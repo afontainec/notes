@@ -61,7 +61,7 @@ module.exports = function auth(passport) {
               newUser.password = User.generateHash(password);
 
               // save the user
-              User.save(newUser).then(user => done(null, user)).catch((err) => {
+              User.save(newUser).then(savedUser => done(null, savedUser)).catch((err) => {
                 if (err) {
                   return done(req.flash('signupMessage', err));
                 }
